@@ -1,0 +1,10 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+
+# DBs
+*.db
+
+# Output
+uploads
