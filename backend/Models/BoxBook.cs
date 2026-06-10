@@ -14,7 +14,9 @@ public enum Status {
 public class BoxBook
 {
 	public int BoxId                { get; set; }
+	public Box Box                  { get; set; }
 	public int BookId               { get; set; }
+	public Book Book                { get; set; }
 	public Status Status            { get; set; }
 	public int? Rating              { get; set; }
 	public int? PagesRead           { get; set; }
