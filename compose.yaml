@@ -1,0 +1,33 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_PASSWORD} -U $${POSTGRES_USER}"] 
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    environment:
+      POSTGRES_USER: ${DB_USER:-pandora}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-pandora}
+      POSTGRES_DB: pandora
+
+  pandora:
+    build: backend/.
+    image: pandora:latest
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+    environment:
+      ConnectionStrings__PandoraContext: Host=db;Database=pandora;Username=${DB_USER:-pandora};Password=${DB_PASSWORD:-pandora}
+
+  migrate:
+    image: pandora:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    entrypoint: ["sh", "-c", "dotnet ef database update"]
+    environment:
+      ConnectionStrings__PandoraContext: Host=db;Database=pandora;Username=${DB_USER:-pandora};Password=${DB_PASSWORD:-pandora}
