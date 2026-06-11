@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
+using Service;
 using Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,7 @@ builder.Services.AddDbContextPool<PandoraContext>(opt =>
 		opt.UseNpgsql(builder.Configuration.GetConnectionString("PandoraContext")));
 
 // Add services to the container.
+builder.Services.AddScoped<UsersService>();
 
 builder.Services.AddControllers();
 
