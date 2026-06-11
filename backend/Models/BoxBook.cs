@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Models;
+namespace Model;
 
 public enum Status {
 	READING,

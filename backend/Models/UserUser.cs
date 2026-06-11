@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace Models;
+namespace Model;
 
 [PrimaryKey(nameof(FollowerId), nameof(FollowedId))]
 public class UserUser
