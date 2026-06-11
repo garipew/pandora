@@ -32,7 +32,7 @@ public class UsersService
 		_context.Users.Add(newUser);
 		_context.SaveChanges();
 
-		return _context.Users.Where(u => u.Username == username).FirstOrDefault();
+		return newUser;
 	}
 
 	private string Hash(string input)
