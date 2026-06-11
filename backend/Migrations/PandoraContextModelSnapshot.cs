@@ -22,7 +22,7 @@ namespace pandora.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Models.Author", b =>
+            modelBuilder.Entity("Model.Author", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -39,7 +39,7 @@ namespace pandora.Migrations
                     b.ToTable("Authors");
                 });
 
-            modelBuilder.Entity("Models.Book", b =>
+            modelBuilder.Entity("Model.Book", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -71,7 +71,7 @@ namespace pandora.Migrations
                     b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("Models.Box", b =>
+            modelBuilder.Entity("Model.Box", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -96,7 +96,7 @@ namespace pandora.Migrations
                     b.ToTable("Boxes");
                 });
 
-            modelBuilder.Entity("Models.BoxBook", b =>
+            modelBuilder.Entity("Model.BoxBook", b =>
                 {
                     b.Property<int>("BoxId")
                         .HasColumnType("integer");
@@ -120,7 +120,7 @@ namespace pandora.Migrations
                     b.ToTable("Entries");
                 });
 
-            modelBuilder.Entity("Models.User", b =>
+            modelBuilder.Entity("Model.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -128,18 +128,18 @@ namespace pandora.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Username")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("createdAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("passwordHash")
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -148,7 +148,7 @@ namespace pandora.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Models.UserUser", b =>
+            modelBuilder.Entity("Model.UserUser", b =>
                 {
                     b.Property<int>("FollowerId")
                         .HasColumnType("integer");
@@ -166,9 +166,9 @@ namespace pandora.Migrations
                     b.ToTable("Connections");
                 });
 
-            modelBuilder.Entity("Models.Book", b =>
+            modelBuilder.Entity("Model.Book", b =>
                 {
-                    b.HasOne("Models.Author", "Author")
+                    b.HasOne("Model.Author", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -177,9 +177,9 @@ namespace pandora.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("Models.Box", b =>
+            modelBuilder.Entity("Model.Box", b =>
                 {
-                    b.HasOne("Models.User", "Owner")
+                    b.HasOne("Model.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -188,15 +188,15 @@ namespace pandora.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("Models.BoxBook", b =>
+            modelBuilder.Entity("Model.BoxBook", b =>
                 {
-                    b.HasOne("Models.Book", "Book")
+                    b.HasOne("Model.Book", "Book")
                         .WithMany()
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.Box", "Box")
+                    b.HasOne("Model.Box", "Box")
                         .WithMany()
                         .HasForeignKey("BoxId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -207,15 +207,15 @@ namespace pandora.Migrations
                     b.Navigation("Box");
                 });
 
-            modelBuilder.Entity("Models.UserUser", b =>
+            modelBuilder.Entity("Model.UserUser", b =>
                 {
-                    b.HasOne("Models.User", "Followed")
+                    b.HasOne("Model.User", "Followed")
                         .WithMany()
                         .HasForeignKey("FollowedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.User", "Follower")
+                    b.HasOne("Model.User", "Follower")
                         .WithMany()
                         .HasForeignKey("FollowerId")
                         .OnDelete(DeleteBehavior.Cascade)
