@@ -14,6 +14,14 @@ public class UsersService
 		_context = ctx;
 	}
 
+	public User? TryGetUser(string emailOrUsername, string password)
+	{
+		return _context.Users
+			.Where(u => emailOrUsername == u.Email || emailOrUsername == u.Username)
+			.Where(u => u.PasswordHash == Hash(password))
+			.FirstOrDefault();
+	}
+
 	public User CreateUser(string email, string username, string password)
 	{
 		if(_context.Users.Where(u => u.Email == email).Any()) {
