@@ -40,6 +40,7 @@ builder.Services.AddDbContextPool<PandoraContext>(opt =>
 		opt.UseNpgsql(builder.Configuration.GetConnectionString("PandoraContext")));
 
 builder.Services.AddScoped<UsersService>();
+builder.Services.AddScoped<BoxesService>();
 builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddControllers();
