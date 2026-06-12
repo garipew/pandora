@@ -1,15 +1,24 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using Service;
 using Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.Configure<JwtSettings>(
+		builder.Configuration.GetSection("JwtSettings")
+		);
+// Add services to the container.
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+	.AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
+			opt => builder.Configuration.Bind("JwtSettings", opt));
+
 builder.Services.AddDbContextPool<PandoraContext>(opt =>
 		opt.UseNpgsql(builder.Configuration.GetConnectionString("PandoraContext")));
 
-// Add services to the container.
 builder.Services.AddScoped<UsersService>();
+builder.Services.AddScoped<AuthService>();
 
 builder.Services.AddControllers();
 
@@ -26,6 +35,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
