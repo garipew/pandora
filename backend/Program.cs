@@ -6,6 +6,7 @@ using System.Text;
 
 using Service;
 using Data;
+using Dto;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,22 @@ var jwtSettings = builder.Configuration
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 	.AddJwtBearer(opt =>
 	{
+		opt.Events = new JwtBearerEvents
+		{
+			OnChallenge = async context =>
+			{
+				context.HandleResponse();
+				context.Response.StatusCode = 401;
+				context.Response.ContentType = "application/json";
+				await context.Response.WriteAsJsonAsync(
+						new PandoraError(new ErrorData(
+								"UNAUTHORIZED",
+								"missing or invalid token"
+								)
+							)
+						);
+			}
+		};
 		opt.TokenValidationParameters = new TokenValidationParameters
 		{
 			ValidateIssuerSigningKey = true,
