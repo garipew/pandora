@@ -3,5 +3,5 @@
 [Oo]bj/
 [Dd]ebug/
 
-# DBs
-*.db
+# env file
+.env
