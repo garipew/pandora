@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 using Data;
@@ -8,6 +9,7 @@ namespace Service;
 public class UsersService
 {
 	private PandoraContext _context;
+	private readonly PasswordHasher<User> _hasher = new();
 
 	public UsersService(PandoraContext ctx)
 	{
@@ -16,10 +18,23 @@ public class UsersService
 
 	public User? TryGetUser(string emailOrUsername, string password)
 	{
-		return _context.Users
+		var candidates = _context.Users
 			.Where(u => emailOrUsername == u.Email || emailOrUsername == u.Username)
-			.Where(u => u.PasswordHash == Hash(password))
-			.FirstOrDefault();
+			.ToList();
+		foreach(var c in candidates) {
+			switch(_hasher.VerifyHashedPassword(c, c.PasswordHash, password)) {
+				case PasswordVerificationResult.Success:
+					return c;
+				case PasswordVerificationResult.SuccessRehashNeeded:
+					c.PasswordHash = Hash(c, password);
+					_context.SaveChanges();
+					return c;
+				case PasswordVerificationResult.Failed:
+				default:
+					break;
+			}
+		}
+		return null;
 	}
 
 	public User CreateUser(string email, string username, string password)
@@ -34,8 +49,8 @@ public class UsersService
 		User newUser = new User();
 		newUser.Email = email;
 		newUser.Username = username;
-		newUser.PasswordHash = Hash(password);
 		newUser.CreatedAt = DateTime.UtcNow;
+		newUser.PasswordHash = Hash(newUser, password);
 
 		_context.Users.Add(newUser);
 		_context.SaveChanges();
@@ -43,9 +58,9 @@ public class UsersService
 		return newUser;
 	}
 
-	private string Hash(string input)
+	private string Hash(User user, string password)
 	{
-		return input;
+		return _hasher.HashPassword(user, password);
 	}
 }
 
