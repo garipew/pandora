@@ -10,6 +10,7 @@ namespace Controller;
 [Route("[controller]")]
 public class UsersController : ControllerBase
 {
+
 	[HttpGet]
 	[ProducesResponseType<UserPublicList>(StatusCodes.Status200OK)]
 	public ActionResult<UserPublicList> Get(UsersService service)
@@ -58,9 +59,9 @@ public class UsersController : ControllerBase
 	}
 
 	[HttpPost]
-	[ProducesResponseType<UserCreateResponse>(StatusCodes.Status201Created)]
+	[ProducesResponseType<UserResponse>(StatusCodes.Status201Created)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status409Conflict)]
-	public ActionResult<UserCreateResponse> Post(UsersService service, [FromBody]UserCreateRequest user)
+	public ActionResult<UserResponse> Post(UsersService service, [FromBody]UserCreateRequest user)
 	{
 		User newUser;
 		try {
@@ -85,7 +86,7 @@ public class UsersController : ControllerBase
 					);	
 		}
 		return StatusCode(
-				StatusCodes.Status201Created, new UserCreateResponse(
+				StatusCodes.Status201Created, new UserResponse(
 					new UserData(
 						newUser.Id,
 						newUser.Email,
