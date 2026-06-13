@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 using Model;
 using Service;
@@ -10,6 +11,38 @@ namespace Controller;
 [Route("[controller]")]
 public class UsersController : ControllerBase
 {
+
+	[Authorize(Roles = "Admin")]
+	[HttpPost("assign")]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	[ProducesResponseType<UserResponse>(StatusCodes.Status200OK)]
+	public ActionResult<UserResponse> Assign(UsersService service, [FromBody]UserPromoteRequest req)
+	{
+		User? user = service.TryGetUserByName(req.emailOrUsername);
+		if(user == null) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"USER_NOT_FOUND",
+							$"user [{req.emailOrUsername}] do not exist"
+							)
+						)
+					);
+		}
+		service.AssignRole(user, req.role);
+		return StatusCode(
+				StatusCodes.Status200OK, new UserResponse(
+					new UserData(
+						user.Id,
+						user.Email,
+						user.Username,
+						user.CreatedAt
+						)
+					)
+				);
+	}
 
 	[HttpGet]
 	[ProducesResponseType<UserPublicList>(StatusCodes.Status200OK)]
@@ -43,7 +76,7 @@ public class UsersController : ControllerBase
 				StatusCodes.Status404NotFound, new PandoraError(
 					new ErrorData(
 						"USER_NOT_FOUND",
-						$"user with id {userId} do not exist"
+						$"user [{userId}] do not exist"
 						)
 					)
 				 );

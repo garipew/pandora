@@ -78,6 +78,13 @@ public class UsersService
 	{
 		return _hasher.HashPassword(user, password);
 	}
+
+	public string AssignRole(User user, string role)
+	{
+		user.Role = role;
+		_context.SaveChanges();
+		return user.Role;
+	}
 }
 
 public class UsernameConflictException : Exception
