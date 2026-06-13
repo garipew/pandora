@@ -66,6 +66,7 @@ public class UsersService
 		newUser.Username = username;
 		newUser.CreatedAt = DateTime.UtcNow;
 		newUser.PasswordHash = Hash(newUser, password);
+		newUser.Role = "User";
 
 		_context.Users.Add(newUser);
 		_context.SaveChanges();
