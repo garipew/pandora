@@ -36,7 +36,7 @@ public class BoxesController : ControllerBase
 					StatusCodes.Status403Forbidden, new PandoraError(
 						new ErrorData(
 							"FORBIDDEN",
-							"cannot modify another user"
+							"you do not have permission to access this resource"
 							)
 						)
 					);

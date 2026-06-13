@@ -147,7 +147,7 @@
 	{
 		"error": {
 			"code": "FORBIDDEN",
-			"message": "cannot modify another user"
+			"message": "you do not have permission to access this resource"
 		}
 	}
 ```

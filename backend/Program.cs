@@ -35,6 +35,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 								)
 							)
 						);
+			},
+			OnForbidden = async context =>
+			{
+				context.Response.StatusCode = 403;
+				context.Response.ContentType = "application/json";
+				await context.Response.WriteAsJsonAsync(
+						new PandoraError(new ErrorData(
+								"FORBIDDEN",
+								"you do not have permission to access this resource"
+								)
+							)
+						);
 			}
 		};
 		opt.TokenValidationParameters = new TokenValidationParameters
