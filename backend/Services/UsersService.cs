@@ -21,23 +21,28 @@ public class UsersService
 		return _context.Users.FirstOrDefault(u => u.Id == id);
 	}
 
-	public User? TryGetUser(string emailOrUsername, string password)
+	public User? TryGetUserByName(string emailOrUsername)
 	{
-		var candidates = _context.Users
-			.Where(u => emailOrUsername == u.Email || emailOrUsername == u.Username)
-			.ToList();
-		foreach(var c in candidates) {
-			switch(_hasher.VerifyHashedPassword(c, c.PasswordHash, password)) {
-				case PasswordVerificationResult.Success:
-					return c;
-				case PasswordVerificationResult.SuccessRehashNeeded:
-					c.PasswordHash = Hash(c, password);
-					_context.SaveChanges();
-					return c;
-				case PasswordVerificationResult.Failed:
-				default:
-					break;
-			}
+		return _context.Users
+			.FirstOrDefault(u => emailOrUsername == u.Email || emailOrUsername == u.Username);
+	}
+
+	public User? TryLogin(string emailOrUsername, string password)
+	{
+		User? user = TryGetUserByName(emailOrUsername);
+		if(user == null) {
+			return null;
+		}
+		switch(_hasher.VerifyHashedPassword(user, user.PasswordHash, password)) {
+			case PasswordVerificationResult.Success:
+				return user;
+			case PasswordVerificationResult.SuccessRehashNeeded:
+				user.PasswordHash = Hash(user, password);
+				_context.SaveChanges();
+				return user;
+			case PasswordVerificationResult.Failed:
+			default:
+				break;
 		}
 		return null;
 	}
