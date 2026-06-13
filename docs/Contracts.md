@@ -122,7 +122,7 @@
 
 #### Response
 201:
-``json
+```json
 	{
 		"data": {
 			"id":          UUID,
