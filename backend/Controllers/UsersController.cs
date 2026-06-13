@@ -10,6 +10,53 @@ namespace Controller;
 [Route("[controller]")]
 public class UsersController : ControllerBase
 {
+	[HttpGet]
+	[ProducesResponseType<UserPublicList>(StatusCodes.Status200OK)]
+	public ActionResult<UserPublicList> Get(UsersService service)
+	{
+		List<User> users = service.GetUsers();
+		List<UserPublicResponse> response = new();
+		foreach(var user in users) {
+			response.Add(new UserPublicResponse(
+						new UserPublicData(
+							user.Username,
+							user.CreatedAt
+							)
+						)
+				    );
+		}
+		return StatusCode(StatusCodes.Status200OK, new UserPublicList(
+					response
+					)
+				);
+	}
+
+	[HttpGet("{userId:int}")]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	[ProducesResponseType<UserPublicResponse>(StatusCodes.Status200OK)]
+	public ActionResult<UserPublicResponse> Get(UsersService service, int userId)
+	{
+		User? user = service.TryGetUserById(userId);
+		if(user == null) {
+			return StatusCode(
+				StatusCodes.Status404NotFound, new PandoraError(
+					new ErrorData(
+						"USER_NOT_FOUND",
+						$"user with id {userId} do not exist"
+						)
+					)
+				 );
+		}
+		return StatusCode(
+				StatusCodes.Status200OK, new UserPublicResponse(
+					new UserPublicData(
+						user.Username,
+						user.CreatedAt
+						)
+					)
+				);
+	}
+
 	[HttpPost]
 	[ProducesResponseType<UserCreateResponse>(StatusCodes.Status201Created)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status409Conflict)]

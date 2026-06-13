@@ -16,6 +16,11 @@ public class UsersService
 		_context = ctx;
 	}
 
+	public User? TryGetUserById(int id)
+	{
+		return _context.Users.FirstOrDefault(u => u.Id == id);
+	}
+
 	public User? TryGetUser(string emailOrUsername, string password)
 	{
 		var candidates = _context.Users
@@ -35,6 +40,11 @@ public class UsersService
 			}
 		}
 		return null;
+	}
+
+	public List<User> GetUsers()
+	{
+		return _context.Users.ToList();
 	}
 
 	public User CreateUser(string email, string username, string password)
