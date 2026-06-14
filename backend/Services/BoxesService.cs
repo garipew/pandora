@@ -16,6 +16,9 @@ public class BoxesService
 
 	public Box CreateBox(int ownerId, string title, string? description)
 	{
+		if(!_context.Users.Any(u => u.Id == ownerId)) {
+			throw new UserNotFoundException();
+		}
 		if(_context.Boxes.Where(u => u.Title == title).Any()) {
 			throw new BoxTitleConflictException();
 		}
@@ -33,6 +36,9 @@ public class BoxesService
 
 	public List<Box> GetBoxes(int userId)
 	{
+		if(!_context.Users.Any(u => u.Id == userId)) {
+			throw new UserNotFoundException();
+		}
 		return _context.Boxes.Where(b => b.OwnerId == userId).ToList();
 	}
 

@@ -16,10 +16,12 @@ public class BoxesController : ControllerBase
 	[HttpGet]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
 	[ProducesResponseType<BoxPublicList>(StatusCodes.Status200OK)]
-	public ActionResult<BoxPublicList> Get(UsersService usersService, BoxesService boxesService, int userId)
+	public ActionResult<BoxPublicList> Get(BoxesService boxesService, int userId)
 	{
-		User? user = usersService.TryGetUserById(userId);
-		if(user == null) {
+		List<Box> boxes;
+		try {
+			boxes = boxesService.GetBoxes(userId);
+		} catch(UserNotFoundException) {
 			return StatusCode(
 				StatusCodes.Status404NotFound, new PandoraError(
 					new ErrorData(
@@ -29,7 +31,6 @@ public class BoxesController : ControllerBase
 					)
 				 );
 		}
-		List<Box> boxes = boxesService.GetBoxes(userId);
 		List<BoxPublicResponse> response = new();
 		foreach(var box in boxes) {
 			response.Add(new BoxPublicResponse(
@@ -53,7 +54,7 @@ public class BoxesController : ControllerBase
 	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status409Conflict)]
-	public ActionResult<BoxCreateResponse> Post(UsersService usersService, BoxesService boxesService, int userId, [FromBody]BoxCreateRequest req)
+	public ActionResult<BoxCreateResponse> Post(BoxesService boxesService, int userId, [FromBody]BoxCreateRequest req)
 	{
 		var currentUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 		if(currentUserId == null) {
@@ -76,17 +77,6 @@ public class BoxesController : ControllerBase
 						)
 					);
 		}
-		User? user = usersService.TryGetUserById(userId);
-		if(user == null) {
-			return StatusCode(
-				StatusCodes.Status404NotFound, new PandoraError(
-					new ErrorData(
-						"USER_NOT_FOUND",
-						$"user [{userId}] do not exist"
-						)
-					)
-				 );
-		}
 		Box newBox;
 		try {
 			newBox = boxesService.CreateBox(userId, req.title, req.description);
@@ -99,6 +89,15 @@ public class BoxesController : ControllerBase
 							)
 						)
 					);	
+		} catch(UserNotFoundException) {
+			return StatusCode(
+				StatusCodes.Status404NotFound, new PandoraError(
+					new ErrorData(
+						"USER_NOT_FOUND",
+						$"user [{userId}] do not exist"
+						)
+					)
+				 );
 		}
 		return StatusCode(
 				StatusCodes.Status201Created, new BoxCreateResponse(
@@ -108,13 +107,13 @@ public class BoxesController : ControllerBase
 						newBox.Description
 						)
 					)
-				);	
+				);
 	}
 
 	[HttpGet("{boxId:int}")]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
 	[ProducesResponseType<BoxPublicResponse>(StatusCodes.Status200OK)]
-	public ActionResult<BoxPublicResponse> Get(UsersService userService, BoxesService boxService, int userId, int boxId)
+	public ActionResult<BoxPublicResponse> Get(BoxesService boxService, int userId, int boxId)
 	{
 		Box box;
 		try {
