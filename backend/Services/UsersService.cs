@@ -16,23 +16,27 @@ public class UsersService
 		_context = ctx;
 	}
 
-	public User? TryGetUserById(int id)
+	public User GetUserById(int id)
 	{
-		return _context.Users.FirstOrDefault(u => u.Id == id);
-	}
-
-	public User? TryGetUserByName(string emailOrUsername)
-	{
-		return _context.Users
-			.FirstOrDefault(u => emailOrUsername == u.Email || emailOrUsername == u.Username);
-	}
-
-	public User? TryLogin(string emailOrUsername, string password)
-	{
-		User? user = TryGetUserByName(emailOrUsername);
+		User? user = _context.Users.FirstOrDefault(u => u.Id == id);
 		if(user == null) {
-			return null;
+			throw new UserNotFoundException();
 		}
+		return user;
+	}
+
+	public User GetUserByName(string emailOrUsername)
+	{
+		User? user = _context.Users.FirstOrDefault(u => emailOrUsername == u.Email || emailOrUsername == u.Username);
+		if(user == null) {
+			throw new UserNotFoundException();
+		}
+		return user;
+	}
+
+	public User Login(string emailOrUsername, string password)
+	{
+		User user = GetUserByName(emailOrUsername);
 		switch(_hasher.VerifyHashedPassword(user, user.PasswordHash, password)) {
 			case PasswordVerificationResult.Success:
 				return user;
@@ -44,7 +48,7 @@ public class UsersService
 			default:
 				break;
 		}
-		return null;
+		throw new UserWrongLoginException();
 	}
 
 	public List<User> GetUsers()
@@ -80,11 +84,7 @@ public class UsersService
 
 	public User UpdateUser(int userId, string email, string username, string password)
 	{
-		User? user = _context.Users.FirstOrDefault(u => u.Id == userId);
-		if(user == null) {
-			throw new UserNotFoundException();
-		}
-
+		User user = GetUserById(userId);
 		user.Email = email;
 		user.Username = username;
 		user.PasswordHash = Hash(user, password);
@@ -96,10 +96,7 @@ public class UsersService
 
 	public User DeleteUser(int userId)
 	{
-		User? user = _context.Users.FirstOrDefault(u => u.Id == userId);
-		if(user == null) {
-			throw new UserNotFoundException();
-		}
+		User user = GetUserById(userId);
 
 		_context.Users.Remove(user);
 		_context.SaveChanges();
@@ -114,14 +111,16 @@ public class UsersService
 
 	public User AssignRole(string emailOrUsername, string role)
 	{
-		User? user = TryGetUserByName(emailOrUsername);
-		if(user == null) {
-			throw new UserNotFoundException();
-		}
+		User user = GetUserByName(emailOrUsername);
 		user.Role = role;
 		_context.SaveChanges();
 		return user;
 	}
+}
+
+public class UserWrongLoginException : Exception
+{
+	public UserWrongLoginException() : base() { }
 }
 
 public class UserNotFoundException : Exception

@@ -72,8 +72,10 @@ public class UsersController : ControllerBase
 	[ProducesResponseType<UserPublicResponse>(StatusCodes.Status200OK)]
 	public ActionResult<UserPublicResponse> Get(UsersService service, int userId)
 	{
-		User? user = service.TryGetUserById(userId);
-		if(user == null) {
+		User user;
+		try {
+			user = service.GetUserById(userId);
+		} catch(UserNotFoundException) {
 			return StatusCode(
 				StatusCodes.Status404NotFound, new PandoraError(
 					new ErrorData(

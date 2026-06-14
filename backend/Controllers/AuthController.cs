@@ -15,8 +15,10 @@ public class AuthController : ControllerBase
 	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
 	public ActionResult<AuthResponse> Post(UsersService usersService, AuthService authService, [FromBody]AuthRequest req)
 	{
-		User? user = usersService.TryLogin(req.emailOrUsername, req.password);
-		if(user == null) {
+		User user;
+		try {
+			user = usersService.Login(req.emailOrUsername, req.password);
+		} catch(UserWrongLoginException) {
 			return StatusCode(
 					StatusCodes.Status401Unauthorized, new PandoraError(
 						new ErrorData(
