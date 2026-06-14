@@ -30,6 +30,11 @@ public class BoxesService
 
 		return newBox;
 	}
+
+	public List<Box> GetBoxes(int userId)
+	{
+		return _context.Boxes.Where(b => b.OwnerId == userId).ToList();
+	}
 }
 
 public class BoxTitleConflictException : Exception
