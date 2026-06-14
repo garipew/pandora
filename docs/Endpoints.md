@@ -42,11 +42,11 @@ METHOD PATH                                                   : authorization
 
 ### /users/{userId}/boxes
 
-- [ ] GET    /users/{userId}/boxes                            : public
+- [x] GET    /users/{userId}/boxes                            : public
 - [x] POST   /users/{userId}/boxes                            : owner
-- [ ] GET    /users/{userId}/boxes/{boxId}                    : public
-- [ ] PUT    /users/{userId}/boxes/{boxId}                    : owner
-- [ ] DELETE /users/{userId}/boxes/{boxId}                    : owner
+- [x] GET    /users/{userId}/boxes/{boxId}                    : public
+- [x] PUT    /users/{userId}/boxes/{boxId}                    : owner
+- [x] DELETE /users/{userId}/boxes/{boxId}                    : owner
 
 ### /users/{userId}/boxes/{boxId}/books
 

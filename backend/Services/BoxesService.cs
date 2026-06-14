@@ -63,6 +63,16 @@ public class BoxesService
 
 		return box;
 	}
+
+	public Box DeleteBox(int userId, int boxId)
+	{
+		Box box = GetBoxById(userId, boxId);
+
+		_context.Boxes.Remove(box);
+		_context.SaveChanges();
+
+		return box;
+	}
 }
 
 public class BoxNotFoundException : Exception

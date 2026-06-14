@@ -207,4 +207,67 @@ public class BoxesController : ControllerBase
 					)
 				);
 	}
+
+	[Authorize]
+	[HttpDelete("{boxId:int}")]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	[ProducesResponseType<BoxResponse>(StatusCodes.Status200OK)]
+	public ActionResult<BoxResponse> DeleteBox(BoxesService boxService, int userId, int boxId)
+	{
+		var currentUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+		if(currentUserId == null) {
+			return StatusCode(
+					StatusCodes.Status401Unauthorized, new PandoraError(
+						new ErrorData(
+							"UNAUTHORIZED",
+							"missing or invalid token"
+							)
+						)
+					);
+		}
+		if(!currentUserId.Equals(userId.ToString())) {
+			return StatusCode(
+					StatusCodes.Status403Forbidden, new PandoraError(
+						new ErrorData(
+							"FORBIDDEN",
+							"you do not have permission to access this resource"
+							)
+						)
+					);
+		}
+		Box box;
+		try {
+			box = boxService.DeleteBox(userId, boxId);
+		} catch(BoxNotFoundException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"BOX_NOT_FOUND",
+							$"box [{boxId}] from user [{userId}] do not exist"
+							)
+						)
+					);
+		} catch(UserNotFoundException) {
+			return StatusCode(
+				StatusCodes.Status404NotFound, new PandoraError(
+					new ErrorData(
+						"USER_NOT_FOUND",
+						$"user [{userId}] do not exist"
+						)
+					)
+				 );
+		}
+
+		return StatusCode(
+				StatusCodes.Status200OK, new BoxResponse(
+					new BoxData(
+						box.Id,
+						box.Title,
+						box.Description
+						)
+					)
+				);
+	}
 }
