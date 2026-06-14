@@ -1,8 +1,8 @@
 # Pandora
 ## Endpoints
 
-METHOD PATH                                             : authorization
-\*      \*                                              : admin
+METHOD PATH                                                   : authorization
+\*      \*                                                    : admin
 
 ### /books
 
@@ -29,6 +29,17 @@ METHOD PATH                                             : authorization
 - [x] DELETE /users/{userId}                                  : owner
 - [x] POST   /users/assign
 
+### /users/{userId}/followers
+
+- [ ] GET    /users/{userId}/followers                        : public
+- [ ] DELETE /users/{userId}/followers/{followId}             : owner
+
+### /users/{userId}/following
+
+- [ ] GET    /users/{userId}/following                        : public
+- [ ] POST   /users/{userId}/following                        : owner
+- [ ] DELETE /users/{userId}/following/{followId}             : owner
+
 ### /users/{userId}/boxes
 
 - [ ] GET    /users/{userId}/boxes                            : public
@@ -48,4 +59,3 @@ METHOD PATH                                             : authorization
 ### /auth
 
 - [x] POST /auth/login                                        : public
-- [ ] POST /auth/logoff                                       : authenticated
