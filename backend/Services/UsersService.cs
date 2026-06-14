@@ -99,11 +99,15 @@ public class UsersService
 		return _hasher.HashPassword(user, password);
 	}
 
-	public string AssignRole(User user, string role)
+	public User AssignRole(string emailOrUsername, string role)
 	{
+		User? user = TryGetUserByName(emailOrUsername);
+		if(user == null) {
+			throw new UserNotFoundException();
+		}
 		user.Role = role;
 		_context.SaveChanges();
-		return user.Role;
+		return user;
 	}
 }
 

@@ -21,8 +21,10 @@ public class UsersController : ControllerBase
 	[ProducesResponseType<UserResponse>(StatusCodes.Status200OK)]
 	public ActionResult<UserResponse> Assign(UsersService service, [FromBody]UserPromoteRequest req)
 	{
-		User? user = service.TryGetUserByName(req.emailOrUsername);
-		if(user == null) {
+		User user;
+		try {
+			user = service.AssignRole(req.emailOrUsername, req.role);
+		} catch(UserNotFoundException) {
 			return StatusCode(
 					StatusCodes.Status404NotFound, new PandoraError(
 						new ErrorData(
@@ -32,7 +34,6 @@ public class UsersController : ControllerBase
 						)
 					);
 		}
-		service.AssignRole(user, req.role);
 		return StatusCode(
 				StatusCodes.Status200OK, new UserResponse(
 					new UserData(
