@@ -25,8 +25,8 @@ METHOD PATH                                             : authorization
 - [x] GET    /users                                           : public
 - [x] POST   /users                                           : public
 - [x] GET    /users/{userId}                                  : public
-- [ ] PUT    /users/{userId}                                  : owner
-- [ ] DELETE /users/{userId}                                  : owner
+- [x] PUT    /users/{userId}                                  : owner
+- [x] DELETE /users/{userId}                                  : owner
 - [x] POST   /users/assign
 
 ### /users/{userId}/boxes

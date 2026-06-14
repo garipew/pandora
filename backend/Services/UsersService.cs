@@ -94,6 +94,19 @@ public class UsersService
 		return user;
 	}
 
+	public User DeleteUser(int userId)
+	{
+		User? user = _context.Users.FirstOrDefault(u => u.Id == userId);
+		if(user == null) {
+			throw new UserNotFoundException();
+		}
+
+		_context.Users.Remove(user);
+		_context.SaveChanges();
+
+		return user;
+	}
+
 	private string Hash(User user, string password)
 	{
 		return _hasher.HashPassword(user, password);
