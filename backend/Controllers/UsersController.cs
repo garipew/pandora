@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 using Model;
 using Service;
@@ -84,6 +85,60 @@ public class UsersController : ControllerBase
 		return StatusCode(
 				StatusCodes.Status200OK, new UserPublicResponse(
 					new UserPublicData(
+						user.Username,
+						user.CreatedAt
+						)
+					)
+				);
+	}
+
+	[Authorize]
+	[HttpPut("{userId:int}")]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	[ProducesResponseType<UserResponse>(StatusCodes.Status200OK)]
+	public ActionResult<UserResponse> UpdateUser(UsersService service, int userId, [FromBody]UserCreateRequest req)
+	{
+		var currentUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+		if(currentUserId == null) {
+			return StatusCode(
+					StatusCodes.Status401Unauthorized, new PandoraError(
+						new ErrorData(
+							"UNAUTHORIZED",
+							"missing or invalid token"
+							)
+						)
+					);
+		}
+		if(!currentUserId.Equals(userId.ToString())) {
+			return StatusCode(
+					StatusCodes.Status403Forbidden, new PandoraError(
+						new ErrorData(
+							"FORBIDDEN",
+							"you do not have permission to access this resource"
+							)
+						)
+					);
+		}
+		User user;
+		try {
+			user = service.UpdateUser(userId, req.email, req.username, req.password);
+		} catch(UserNotFoundException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"USER_NOT_FOUND",
+							$"user [{userId}] do not exist"
+							)
+						)
+					);
+		}
+		return StatusCode(
+				StatusCodes.Status200OK, new UserResponse(
+					new UserData(
+						user.Id,
+						user.Email,
 						user.Username,
 						user.CreatedAt
 						)

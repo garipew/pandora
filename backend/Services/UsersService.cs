@@ -78,6 +78,22 @@ public class UsersService
 		return newUser;
 	}
 
+	public User UpdateUser(int userId, string email, string username, string password)
+	{
+		User? user = _context.Users.FirstOrDefault(u => u.Id == userId);
+		if(user == null) {
+			throw new UserNotFoundException();
+		}
+
+		user.Email = email;
+		user.Username = username;
+		user.PasswordHash = Hash(user, password);
+
+		_context.SaveChanges();
+
+		return user;
+	}
+
 	private string Hash(User user, string password)
 	{
 		return _hasher.HashPassword(user, password);
@@ -89,6 +105,11 @@ public class UsersService
 		_context.SaveChanges();
 		return user.Role;
 	}
+}
+
+public class UserNotFoundException : Exception
+{
+	public UserNotFoundException() : base() { }
 }
 
 public class UsernameConflictException : Exception
