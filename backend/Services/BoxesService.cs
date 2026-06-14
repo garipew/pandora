@@ -53,6 +53,16 @@ public class BoxesService
 		}
 		return box;
 	}
+
+	public Box UpdateBox(int userId, int boxId, string title, string? description)
+	{
+		Box box = GetBoxById(userId, boxId);
+		box.Title = title;
+		box.Description = description;
+		_context.SaveChanges();
+
+		return box;
+	}
 }
 
 public class BoxNotFoundException : Exception

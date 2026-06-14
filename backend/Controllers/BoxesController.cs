@@ -49,12 +49,12 @@ public class BoxesController : ControllerBase
 
 	[Authorize]
 	[HttpPost]
-	[ProducesResponseType<BoxCreateResponse>(StatusCodes.Status201Created)]
+	[ProducesResponseType<BoxResponse>(StatusCodes.Status201Created)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status409Conflict)]
-	public ActionResult<BoxCreateResponse> Post(BoxesService boxesService, int userId, [FromBody]BoxCreateRequest req)
+	public ActionResult<BoxResponse> Post(BoxesService boxesService, int userId, [FromBody]BoxCreateRequest req)
 	{
 		var currentUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 		if(currentUserId == null) {
@@ -100,7 +100,7 @@ public class BoxesController : ControllerBase
 				 );
 		}
 		return StatusCode(
-				StatusCodes.Status201Created, new BoxCreateResponse(
+				StatusCodes.Status201Created, new BoxResponse(
 					new BoxData(
 						newBox.Id,
 						newBox.Title,
@@ -147,4 +147,64 @@ public class BoxesController : ControllerBase
 				);
 	}
 
+	[Authorize]
+	[HttpPut("{boxId:int}")]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	[ProducesResponseType<UserResponse>(StatusCodes.Status200OK)]
+	public ActionResult<BoxResponse> UpdateBox(BoxesService boxService, int userId, int boxId, [FromBody]BoxCreateRequest req)
+	{
+		var currentUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+		if(currentUserId == null) {
+			return StatusCode(
+					StatusCodes.Status401Unauthorized, new PandoraError(
+						new ErrorData(
+							"UNAUTHORIZED",
+							"missing or invalid token"
+							)
+						)
+					);
+		}
+		if(!currentUserId.Equals(userId.ToString())) {
+			return StatusCode(
+					StatusCodes.Status403Forbidden, new PandoraError(
+						new ErrorData(
+							"FORBIDDEN",
+							"you do not have permission to access this resource"
+							)
+						)
+					);
+		}
+		Box box;
+		try {
+			box = boxService.UpdateBox(userId, boxId, req.title, req.description);
+		} catch(UserNotFoundException) {
+			return StatusCode(
+				StatusCodes.Status404NotFound, new PandoraError(
+					new ErrorData(
+						"USER_NOT_FOUND",
+						$"user [{userId}] do not exist"
+						)
+					)
+				 );
+		} catch(BoxNotFoundException) {
+			return StatusCode(
+				StatusCodes.Status404NotFound, new PandoraError(
+					new ErrorData(
+						"BOX_NOT_FOUND",
+						$"box [{boxId}] from user [{userId}] do not exist"
+						)
+					)
+				 );
+		}
+		return StatusCode(
+				StatusCodes.Status200OK, new BoxPublicResponse(
+					new BoxPublicData(
+						box.Title,
+						box.Description
+						)
+					)
+				);
+	}
 }
