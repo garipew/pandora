@@ -35,6 +35,23 @@ public class BoxesService
 	{
 		return _context.Boxes.Where(b => b.OwnerId == userId).ToList();
 	}
+
+	public Box GetBoxById(int userId, int boxId)
+	{
+		if(!_context.Users.Any(u => u.Id == userId)) {
+			throw new UserNotFoundException();
+		}
+		Box? box = _context.Boxes.FirstOrDefault(b => b.OwnerId == userId && b.Id == boxId);
+		if(box == null) {
+			throw new BoxNotFoundException();
+		}
+		return box;
+	}
+}
+
+public class BoxNotFoundException : Exception
+{
+	public BoxNotFoundException() : base() { }
 }
 
 public class BoxTitleConflictException : Exception

@@ -34,7 +34,8 @@ public class BoxesController : ControllerBase
 		foreach(var box in boxes) {
 			response.Add(new BoxPublicResponse(
 						new BoxPublicData(
-							box.Title
+							box.Title,
+							box.Description
 							)
 						)
 				    );
@@ -109,4 +110,42 @@ public class BoxesController : ControllerBase
 					)
 				);	
 	}
+
+	[HttpGet("{boxId:int}")]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	[ProducesResponseType<BoxPublicResponse>(StatusCodes.Status200OK)]
+	public ActionResult<BoxPublicResponse> Get(UsersService userService, BoxesService boxService, int userId, int boxId)
+	{
+		Box box;
+		try {
+			box = boxService.GetBoxById(userId, boxId);
+		} catch(UserNotFoundException) {
+			return StatusCode(
+				StatusCodes.Status404NotFound, new PandoraError(
+					new ErrorData(
+						"USER_NOT_FOUND",
+						$"user [{userId}] do not exist"
+						)
+					)
+				 );
+		} catch(BoxNotFoundException) {
+			return StatusCode(
+				StatusCodes.Status404NotFound, new PandoraError(
+					new ErrorData(
+						"BOX_NOT_FOUND",
+						$"box [{boxId}] from user [{userId}] do not exist"
+						)
+					)
+				 );
+		}
+		return StatusCode(
+				StatusCodes.Status200OK, new BoxPublicResponse(
+					new BoxPublicData(
+						box.Title,
+						box.Description
+						)
+					)
+				);
+	}
+
 }
