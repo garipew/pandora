@@ -67,6 +67,10 @@ public class UsersService
 		newUser.CreatedAt = DateTime.UtcNow;
 		newUser.PasswordHash = Hash(newUser, password);
 		newUser.Role = "User";
+		// First user is assigned with Admin role
+		if(!_context.Users.Any()) {
+			newUser.Role = "Admin";
+		}
 
 		_context.Users.Add(newUser);
 		_context.SaveChanges();
