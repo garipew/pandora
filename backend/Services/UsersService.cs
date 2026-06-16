@@ -36,7 +36,12 @@ public class UsersService
 
 	public User Login(string emailOrUsername, string password)
 	{
-		User user = GetUserByName(emailOrUsername);
+		User user;
+		try {
+			user = GetUserByName(emailOrUsername);
+		} catch(UserNotFoundException) {
+			throw new UserWrongLoginException();
+		}
 		switch(_hasher.VerifyHashedPassword(user, user.PasswordHash, password)) {
 			case PasswordVerificationResult.Success:
 				return user;
