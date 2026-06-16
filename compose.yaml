@@ -12,6 +12,17 @@ services:
       POSTGRES_USER: ${DB_USER:-pandora}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-pandora}
       POSTGRES_DB: pandora
+    volumes:
+      - pg_data:/var/lib/postgresql
+
+  db-test:
+    image: postgres
+    environment:
+      POSTGRES_USER: pandora
+      POSTGRES_PASSWORD: pandora
+      POSTGRES_DB: pandora
+    ports:
+      - "7357:5432"
 
   pandora:
     build: backend/.
@@ -34,3 +45,6 @@ services:
     entrypoint: ["sh", "-c", "dotnet ef database update"]
     environment:
       ConnectionStrings__PandoraContext: Host=db;Database=pandora;Username=${DB_USER:-pandora};Password=${DB_PASSWORD:-pandora}
+
+volumes:
+  pg_data:
