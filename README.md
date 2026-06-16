@@ -40,7 +40,7 @@ dotnet run --project backend/pandora.csproj
 ```
 
 > [!IMPORTANT]
-> Make sure to pass the DB connection string to the app on the env 'ConnectionStrings__PandoraContext'
+> Make sure to pass the DB connection string to the app on the env `ConnectionStrings__PandoraContext`
 
 Then, open the OpenAPI docs on `http://localhost:5000/swagger` in your browser
 
