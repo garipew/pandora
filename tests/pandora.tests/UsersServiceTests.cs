@@ -1,6 +1,4 @@
-﻿using Model;
-using Data;
-using Service;
+﻿using Service;
 
 using pandora.tests.Infrastructure;
 
