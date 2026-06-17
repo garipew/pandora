@@ -88,6 +88,12 @@ public class UsersService
 
 	public User UpdateUser(int userId, string email, string username, string password)
 	{
+		if(_context.Users.Where(u => u.Id != userId).Any(u => u.Email == email)) {
+			throw new EmailConflictException();
+		}
+		if(_context.Users.Where(u => u.Id != userId).Any(u => u.Username == username)) {
+			throw new UsernameConflictException();
+		}
 		User user = GetUserById(userId);
 		user.Email = email;
 		user.Username = username;

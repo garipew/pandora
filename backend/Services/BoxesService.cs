@@ -54,6 +54,9 @@ public class BoxesService
 
 	public Box UpdateBox(int userId, int boxId, string title, string? description)
 	{
+		if(_context.Boxes.Where(b => b.OwnerId == userId).Where(b => b.Id != boxId).Any(b => b.Title == title)) {
+			throw new BoxTitleConflictException();
+		}
 		Box box = GetBoxById(userId, boxId);
 		box.Title = title;
 		box.Description = description;

@@ -50,4 +50,23 @@ public class BoxesServiceTests : IClassFixture<DbFixture>
 
 		tx.Rollback();
 	}
+
+	[Fact]
+	public void UpdateBox_ShouldThrowOnConflict()
+	{
+		var ctx = TestDbFactory.Create();
+		var service = new BoxesService(ctx);
+		var uService = new UsersService(ctx);
+
+		using var tx = ctx.Database.BeginTransaction();
+
+		User owner = uService.CreateUser("test@mail.com", "test", "test");
+
+		service.CreateBox(owner.Id, "test", "test");
+		Box toUpdate = service.CreateBox(owner.Id, "test2", "test");
+
+		Assert.Throws<BoxTitleConflictException>(() => service.UpdateBox(owner.Id, toUpdate.Id, "test", "test"));
+
+		tx.Rollback();
+	}
 }

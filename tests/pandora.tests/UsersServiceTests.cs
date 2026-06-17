@@ -1,4 +1,5 @@
 ﻿using Service;
+using Model;
 
 using pandora.tests.Infrastructure;
 
@@ -63,6 +64,23 @@ public class UsersServiceTests : IClassFixture<DbFixture>
 		Assert.Throws<UserWrongLoginException>(() => service.Login("wrongLogin", "test"));
 		Assert.Throws<UserWrongLoginException>(() => service.Login("test", "wrongPassword"));
 		Assert.Throws<UserWrongLoginException>(() => service.Login("test@mail.com", "wrongPassword"));
+		tx.Rollback();
+	}
+
+	[Fact]
+	public void UpdateUser_ShouldThrowOnConflict()
+	{
+		var ctx = TestDbFactory.Create();
+		var service = new UsersService(ctx);
+
+		using var tx = ctx.Database.BeginTransaction();
+
+		service.CreateUser("test@mail.com", "test", "testpassword");
+		User toUpdate = service.CreateUser("test2@mail.com", "test2", "testpassword");
+
+		Assert.Throws<EmailConflictException>(() => service.UpdateUser(toUpdate.Id, "test@mail.com", "test2", "testpassword"));
+		Assert.Throws<UsernameConflictException>(() => service.UpdateUser(toUpdate.Id, "test2@mail.com", "test", "testpassword"));
+
 		tx.Rollback();
 	}
 }
