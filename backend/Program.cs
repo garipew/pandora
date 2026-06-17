@@ -71,6 +71,7 @@ builder.Services.AddDbContextPool<PandoraContext>(opt =>
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<BoxesService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<AuthorsService>();
 
 builder.Services.AddControllers();
 

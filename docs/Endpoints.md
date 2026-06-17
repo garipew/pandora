@@ -14,11 +14,11 @@ METHOD PATH                                                   : authorization
 
 ### /authors
 
-- [ ] GET    /authors                                         : public
-- [ ] POST   /authors
-- [ ] GET    /authors/{authorId}                              : public
-- [ ] PUT    /authors/{authorId}
-- [ ] DELETE /authors/{authorId}
+- [x] GET    /authors                                         : public
+- [x] POST   /authors
+- [x] GET    /authors/{authorId}                              : public
+- [x] PUT    /authors/{authorId}
+- [x] DELETE /authors/{authorId}
 
 ### /users
 
