@@ -72,6 +72,7 @@ builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<BoxesService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AuthorsService>();
+builder.Services.AddScoped<BooksService>();
 
 builder.Services.AddControllers();
 
