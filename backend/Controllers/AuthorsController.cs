@@ -97,6 +97,7 @@ public class AuthorsController : ControllerBase
 	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status409Conflict)]
 	[ProducesResponseType<UserResponse>(StatusCodes.Status200OK)]
 	public ActionResult<AuthorResponse> UpdateAuthor(AuthorsService authorService, int authorId, [FromBody]AuthorCreateRequest req)
 	{

@@ -107,6 +107,7 @@ public class BooksController : ControllerBase
 	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status409Conflict)]
 	[ProducesResponseType<UserResponse>(StatusCodes.Status200OK)]
 	public ActionResult<BookResponse> UpdateBook(BooksService bookService, int bookId, [FromBody]BookCreateRequest req)
 	{
