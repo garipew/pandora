@@ -62,11 +62,10 @@ public class BooksController : ControllerBase
 				StatusCodes.Status201Created, new BookResponse(
 					new BookData(
 						newBook.Id,
-						newBook.AuthorId,
-						newBook.Isbn,
-						newBook.Pages,
 						newBook.Title,
-						newBook.Description
+						newBook.Description,
+						newBook.Isbn,
+						newBook.Pages
 						)
 					)
 				);
@@ -180,11 +179,10 @@ public class BooksController : ControllerBase
 				StatusCodes.Status200OK, new BookResponse(
 					new BookData(
 						book.Id,
-						book.AuthorId,
-						book.Isbn,
-						book.Pages,
 						book.Title,
-						book.Description
+						book.Description,
+						book.Isbn,
+						book.Pages
 						)
 					)
 				);
