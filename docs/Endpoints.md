@@ -6,11 +6,11 @@ METHOD PATH                                                   : authorization
 
 ### /books
 
-- [ ] GET    /books                                           : public
-- [ ] POST   /books
-- [ ] GET    /books/{bookId}                                  : public
-- [ ] PUT    /books/{bookId}
-- [ ] DELETE /books/{bookId}
+- [x] GET    /books                                           : public
+- [x] POST   /books
+- [x] GET    /books/{bookId}                                  : public
+- [x] PUT    /books/{bookId}
+- [x] DELETE /books/{bookId}
 
 ### /authors
 
