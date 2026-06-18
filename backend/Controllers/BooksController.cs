@@ -47,7 +47,7 @@ public class BooksController : ControllerBase
 	{
 		Book newBook;
 		try {
-			newBook = booksService.CreateBook(req.authorId, req.isbn, req.pages, req.title, req.description);
+			newBook = booksService.CreateBook(req.title, req.description, req.isbn, req.pages);
 		} catch(Exception e) when (e is BookTitleConflictException || e is IsbnConflictException) {
 			return StatusCode(
 					StatusCodes.Status409Conflict, new PandoraError(
@@ -81,22 +81,22 @@ public class BooksController : ControllerBase
 			book = bookService.GetBookById(bookId);
 		} catch(BookNotFoundException) {
 			return StatusCode(
-				StatusCodes.Status404NotFound, new PandoraError(
-					new ErrorData(
-						"BOOK_NOT_FOUND",
-						$"book [{bookId}] do not exist"
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"BOOK_NOT_FOUND",
+							$"book [{bookId}] do not exist"
+							)
 						)
-					)
-				 );
+					);
 		}
 		return StatusCode(
 				StatusCodes.Status200OK, new BookPublicResponse(
-						new BookPublicData(
-							book.Isbn,
-							book.Pages,
-							book.Title,
-							book.Description
-							)
+					new BookPublicData(
+						book.Isbn,
+						book.Pages,
+						book.Title,
+						book.Description
+						)
 					)
 				);
 	}
@@ -115,13 +115,13 @@ public class BooksController : ControllerBase
 			book = bookService.UpdateBook(bookId, req.isbn, req.pages, req.title, req.description);
 		} catch(BookNotFoundException) {
 			return StatusCode(
-				StatusCodes.Status404NotFound, new PandoraError(
-					new ErrorData(
-						"BOOK_NOT_FOUND",
-						$"book [{bookId}] do not exist"
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"BOOK_NOT_FOUND",
+							$"book [{bookId}] do not exist"
+							)
 						)
-					)
-				 );
+					);
 		} catch(BookTitleConflictException) {
 			return StatusCode(
 					StatusCodes.Status409Conflict, new PandoraError(
@@ -144,12 +144,12 @@ public class BooksController : ControllerBase
 
 		return StatusCode(
 				StatusCodes.Status200OK, new BookPublicResponse(
-						new BookPublicData(
-							book.Isbn,
-							book.Pages,
-							book.Title,
-							book.Description
-							)
+					new BookPublicData(
+						book.Isbn,
+						book.Pages,
+						book.Title,
+						book.Description
+						)
 					)
 				);
 	}

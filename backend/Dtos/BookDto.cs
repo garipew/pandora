@@ -1,6 +1,6 @@
 namespace Dto;
 
-public record BookCreateRequest(int authorId, string isbn, int pages, string title, string? description);
+public record BookCreateRequest(string title, string? description, string isbn, int pages);
 
 public record BookData(int id, string title, string? description, string isbn, int pages);
 public record BookResponse(BookData data);

@@ -12,7 +12,7 @@ public class BooksService
 		_context = ctx;
 	}
 
-	public Book CreateBook(int authorId, string isbn, int pages, string title, string? description)
+	public Book CreateBook(string title, string? description, string isbn, int pages)
 	{
 		if(_context.Books.Where(b => b.Isbn == isbn).Any()) {
 			throw new IsbnConflictException();
