@@ -1,5 +1,6 @@
 namespace Model;
 
+// TODO(garipew): Book model should allow co-authors mapping
 public class Book
 {
 	public int Id                   { get; set; }
