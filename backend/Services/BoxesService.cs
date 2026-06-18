@@ -12,9 +12,9 @@ public class BoxesService
 		_context = ctx;
 	}
 
-	public Box CreateBox(int ownerId, string title, string? description)
+	public Box CreateBox(int userId, string title, string? description)
 	{
-		if(!_context.Users.Any(u => u.Id == ownerId)) {
+		if(!_context.Users.Any(u => u.Id == userId)) {
 			throw new UserNotFoundException();
 		}
 		if(_context.Boxes.Where(u => u.Title == title).Any()) {
@@ -24,7 +24,7 @@ public class BoxesService
 		Box newBox = new Box();
 		newBox.Title = title;
 		newBox.Description = description;
-		newBox.OwnerId = ownerId;
+		newBox.UserId = userId;
 
 		_context.Boxes.Add(newBox);
 		_context.SaveChanges();
@@ -37,7 +37,7 @@ public class BoxesService
 		if(!_context.Users.Any(u => u.Id == userId)) {
 			throw new UserNotFoundException();
 		}
-		return _context.Boxes.Where(b => b.OwnerId == userId).ToList();
+		return _context.Boxes.Where(b => b.UserId == userId).ToList();
 	}
 
 	public Box GetBoxById(int userId, int boxId)
@@ -45,7 +45,7 @@ public class BoxesService
 		if(!_context.Users.Any(u => u.Id == userId)) {
 			throw new UserNotFoundException();
 		}
-		Box? box = _context.Boxes.FirstOrDefault(b => b.OwnerId == userId && b.Id == boxId);
+		Box? box = _context.Boxes.FirstOrDefault(b => b.UserId == userId && b.Id == boxId);
 		if(box == null) {
 			throw new BoxNotFoundException();
 		}
@@ -54,7 +54,7 @@ public class BoxesService
 
 	public Box UpdateBox(int userId, int boxId, string title, string? description)
 	{
-		if(_context.Boxes.Where(b => b.OwnerId == userId).Where(b => b.Id != boxId).Any(b => b.Title == title)) {
+		if(_context.Boxes.Where(b => b.UserId == userId).Where(b => b.Id != boxId).Any(b => b.Title == title)) {
 			throw new BoxTitleConflictException();
 		}
 		Box box = GetBoxById(userId, boxId);

@@ -14,19 +14,15 @@ public class BooksService
 
 	public Book CreateBook(int authorId, string isbn, int pages, string title, string? description)
 	{
-		if(_context.Books.Where(b => b.AuthorId == authorId).Where(b => b.Title == title).Any()) {
-			throw new BookTitleConflictException();
-		}
 		if(_context.Books.Where(b => b.Isbn == isbn).Any()) {
 			throw new IsbnConflictException();
 		}
 
 		Book newBook = new Book();
-		newBook.AuthorId    = authorId;
-		newBook.Isbn        = isbn;
-		newBook.Pages       = pages;
 		newBook.Title       = title;
 		newBook.Description = description;
+		newBook.Isbn        = isbn;
+		newBook.Pages       = pages;
 
 		_context.Books.Add(newBook);
 		_context.SaveChanges();
@@ -54,11 +50,6 @@ public class BooksService
 		if(_context.Books.Where(b => b.Id != book.Id)
 				.Any(b => b.Isbn == isbn)) {
 			throw new IsbnConflictException();
-		}
-		if(_context.Books.Where(b => b.Id != book.Id)
-				.Where(b => b.AuthorId == book.AuthorId)
-				.Any(b => b.Title == title)) {
-			throw new BookTitleConflictException();
 		}
 		book.Isbn        = isbn;
 		book.Pages       = pages;
