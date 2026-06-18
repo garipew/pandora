@@ -1,73 +1,20 @@
 # Pandora
 ## Contracts
 
-### Response body skeleton
+The API produces responses to clients requests in this general shape:
+
 ```json
 	{
 		"data": {...}
 	}
-	// Or
+```
+
+Errors have their own general shape:
+```json
 	{
 		"error": {
 			"code": string,
 			"message": string,
-			"details": ?[]
-		}
-	}
-```
-
-### POST /users
-
-#### Request
-
-```json
-	{
-		"username": string,
-		"password": string,
-		"email":    string
-	}
-```
-
-#### Response
-
-201:
-```json
-	{
-		"data": {
-			"username":  string,
-			"email":     string,
-			"createdAt": ISO 8601,
-			"id":        UUID
-		}
-	}
-```
-
-400:
-```json
-	{
-		"error": {
-			"code": "BAD_REQUEST",
-			"message": "failed to create user",
-			"details": [
-                    {
-                        "field": "email",
-                        "message": "invalid email"
-                    },
-                    {
-                        "field": "username",
-                        "message": "username too short"
-                    }
-            ]
-		}
-	}
-```
-
-409:
-```json
-	{
-		"error": {
-			"code": "EMAIL_EXISTS",
-			"message": "email already used by another account"
 		}
 	}
 ```
