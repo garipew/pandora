@@ -53,7 +53,7 @@ public class AuthorsController : ControllerBase
 							"author already exists"
 							)
 						)
-					);	
+					);
 		}
 		return StatusCode(
 				StatusCodes.Status201Created, new AuthorResponse(
@@ -112,6 +112,15 @@ public class AuthorsController : ControllerBase
 						)
 					)
 				 );
+		} catch(AuthorNameConflictException) {
+			return StatusCode(
+					StatusCodes.Status409Conflict, new PandoraError(
+						new ErrorData(
+							"AUTHOR_EXISTS",
+							"author name already in use"
+							)
+						)
+					);
 		}
 		return StatusCode(
 				StatusCodes.Status200OK, new AuthorPublicResponse(
