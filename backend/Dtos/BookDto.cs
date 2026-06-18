@@ -1,0 +1,11 @@
+namespace Dto;
+
+public record BookCreateRequest(int authorId, string isbn, int pages, string title, string? description);
+
+public record BookData(int id, int authorId, string isbn, int pages, string title, string? description);
+public record BookResponse(BookData data);
+
+public record BookPublicData(string isbn, int pages, string title, string? description);
+public record BookPublicResponse(BookPublicData data);
+
+public record BookPublicList(List<BookPublicResponse> data);
