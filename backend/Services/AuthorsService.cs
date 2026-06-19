@@ -66,10 +66,20 @@ public class AuthorsService
 	{
 		Author author = GetAuthorById(authorId);
 
+		List<Book> authorBooks = _context.AuthorBooks
+			.Where(ab => ab.AuthorId == author.Id)
+			.Join(_context.Books,
+			ab => ab.BookId, book => book.Id,
+			(ab, book) => book).ToList();
+
+		foreach(var authorBook in authorBooks) {
+			if(_context.AuthorBooks.Count(ab => ab.BookId == authorBook.Id) > 1) {
+				continue;
+			}
+			_context.Books.Remove(authorBook);
+		}
+
 		_context.Authors.Remove(author);
-		// TODO(garipew): Should delete books **exclusively** from this author,
-		// also delete ALL relationships
-		// AuthorBook.Where(ab => ab.AuthorId == authorId)
 		_context.SaveChanges();
 
 		return author;
