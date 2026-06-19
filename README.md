@@ -2,9 +2,6 @@
 ![cs](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=csharp&logoColor=white) ![dotnet](https://img.shields.io/badge/.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) ![postgres](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white) ![swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=Swagger&logoColor=white) ![docker](https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white) ![jwt](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white) [![CI](https://github.com/garipew/pandora/actions/workflows/ci.yml/badge.svg)](https://github.com/garipew/pandora/actions/workflows/ci.yml)
 > A social book cataloguing webapp. Track, discover and share what you are reading!
 
-> [!NOTE]
-> Pandora is in early development. Come back later! 👋
-
 ---
 
 ## Tech-stack
