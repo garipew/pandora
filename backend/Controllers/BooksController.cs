@@ -44,9 +44,12 @@ public class BooksController : ControllerBase
 	public ActionResult<BookResponse> Post(BooksService booksService, AuthorsService authorsService, [FromBody]BookCreateRequest req)
 	{
 		Book newBook;
+		List<int> authorsIds = new();
+		foreach(var author in req.authors) {
+			authorsIds.Add(authorsService.GetOrCreate(author).Id);
+		}
 		try {
-			Author author  = authorsService.GetOrCreate(req.author);
-			newBook = booksService.CreateBook(req.title, req.description, req.isbn, req.pages, author.Id);
+			newBook = booksService.CreateBook(req.title, req.description, req.isbn, req.pages, authorsIds);
 		} catch(Exception e) when (e is BookTitleConflictException || e is IsbnConflictException) {
 			return StatusCode(
 					StatusCodes.Status409Conflict, new PandoraError(

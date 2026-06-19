@@ -13,7 +13,7 @@ public class BooksService
 		_context = ctx;
 	}
 
-	public Book CreateBook(string title, string? description, string isbn, int pages, int authorId)
+	public Book CreateBook(string title, string? description, string isbn, int pages, List<int> authorsId)
 	{
 		if(_context.Books.Where(b => b.Isbn == isbn).Any()) {
 			throw new IsbnConflictException();
@@ -28,11 +28,13 @@ public class BooksService
 		_context.Books.Add(newBook);
 		_context.SaveChanges();
 
-		AuthorBook ab = new();
-		ab.BookId = newBook.Id;
-		ab.AuthorId = authorId;
+		foreach(var authorId in authorsId) {
+			AuthorBook ab = new();
+			ab.BookId = newBook.Id;
+			ab.AuthorId = authorId;
 
-		_context.AuthorBooks.Add(ab);
+			_context.AuthorBooks.Add(ab);
+		}
 
 		_context.SaveChanges();
 
