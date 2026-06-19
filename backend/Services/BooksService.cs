@@ -1,3 +1,4 @@
+using Dto;
 using Data;
 using Model;
 
@@ -12,7 +13,7 @@ public class BooksService
 		_context = ctx;
 	}
 
-	public Book CreateBook(string title, string? description, string isbn, int pages)
+	public Book CreateBook(string title, string? description, string isbn, int pages, int authorId)
 	{
 		if(_context.Books.Where(b => b.Isbn == isbn).Any()) {
 			throw new IsbnConflictException();
@@ -27,6 +28,14 @@ public class BooksService
 		_context.Books.Add(newBook);
 		_context.SaveChanges();
 
+		AuthorBook ab = new();
+		ab.BookId = newBook.Id;
+		ab.AuthorId = authorId;
+
+		_context.AuthorBooks.Add(ab);
+
+		_context.SaveChanges();
+
 		return newBook;
 	}
 
@@ -38,6 +47,31 @@ public class BooksService
 	public Book GetBookById(int bookId)
 	{
 		Book? book = _context.Books.FirstOrDefault(a => a.Id == bookId);
+		if(book == null) {
+			throw new BookNotFoundException();
+		}
+		return book;
+	}
+
+	public Book GetBookByAuthor(string title, string author)
+	{
+		if(!_context.Books.Any(b => b.Title == title)) {
+			throw new BookNotFoundException();
+		}
+		if(!_context.Authors.Any(a => a.Name == author)) {
+			throw new AuthorNotFoundException();
+		}
+
+		Book? book = _context.Authors.Where(a => a.Name == author)
+			.Join(_context.AuthorBooks,
+				author => author.Id, ab => ab.AuthorId,
+				(author, ab) => ab
+			     )
+			.Join(_context.Books,
+				ab => ab.BookId, book => book.Id,
+				(ab, book) => book
+			     )
+			.FirstOrDefault(b => b.Title == title);
 		if(book == null) {
 			throw new BookNotFoundException();
 		}
@@ -64,6 +98,7 @@ public class BooksService
 	{
 		Book book = GetBookById(bookId);
 
+		// TODO(garipew): Should also delete the relationship AuthorBook
 		_context.Books.Remove(book);
 		_context.SaveChanges();
 

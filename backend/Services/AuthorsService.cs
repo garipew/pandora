@@ -41,6 +41,15 @@ public class AuthorsService
 		return author;
 	}
 
+	public Author GetOrCreate(string name)
+	{
+		Author? author = _context.Authors.FirstOrDefault(a => a.Name == name);
+		if(author == null) {
+			author = CreateAuthor(name);
+		}
+		return author;
+	}
+
 	public Author UpdateAuthor(int authorId, string name)
 	{
 		if(_context.Authors.Where(a => a.Id != authorId).Any(a => a.Name == name)) {
@@ -58,6 +67,9 @@ public class AuthorsService
 		Author author = GetAuthorById(authorId);
 
 		_context.Authors.Remove(author);
+		// TODO(garipew): Should delete books **exclusively** from this author,
+		// also delete ALL relationships
+		// AuthorBook.Where(ab => ab.AuthorId == authorId)
 		_context.SaveChanges();
 
 		return author;

@@ -41,11 +41,12 @@ public class BooksController : ControllerBase
 	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status409Conflict)]
-	public ActionResult<BookResponse> Post(BooksService booksService, [FromBody]BookCreateRequest req)
+	public ActionResult<BookResponse> Post(BooksService booksService, AuthorsService authorsService, [FromBody]BookCreateRequest req)
 	{
 		Book newBook;
 		try {
-			newBook = booksService.CreateBook(req.title, req.description, req.isbn, req.pages);
+			Author author  = authorsService.GetOrCreate(req.author);
+			newBook = booksService.CreateBook(req.title, req.description, req.isbn, req.pages, author.Id);
 		} catch(Exception e) when (e is BookTitleConflictException || e is IsbnConflictException) {
 			return StatusCode(
 					StatusCodes.Status409Conflict, new PandoraError(
