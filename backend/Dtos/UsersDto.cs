@@ -9,4 +9,4 @@ public record UserResponse(UserData data);
 public record UserPublicData(string username, DateTime createdAt);
 public record UserPublicResponse(UserPublicData data);
 
-public record UserPublicList(List<UserPublicResponse> data);
+public record UserPublicList(List<UserPublicData> data);

@@ -8,4 +8,4 @@ public record BookResponse(BookData data);
 public record BookPublicData(string isbn, int pages, string title, string? description);
 public record BookPublicResponse(BookPublicData data);
 
-public record BookPublicList(List<BookPublicResponse> data);
+public record BookPublicList(List<BookPublicData> data);

@@ -12,18 +12,15 @@ namespace Controller;
 [Route("[controller]")]
 public class AuthorsController : ControllerBase
 {
-
 	[HttpGet]
 	[ProducesResponseType<AuthorPublicList>(StatusCodes.Status200OK)]
 	public ActionResult<AuthorPublicList> Get(AuthorsService authorsService)
 	{
 		List<Author> authors = authorsService.GetAuthors();
-		List<AuthorPublicResponse> response = new();
+		List<AuthorPublicData> response = new();
 		foreach(var author in authors) {
-			response.Add(new AuthorPublicResponse(
-						new AuthorPublicData(
-							author.Name
-							)
+			response.Add(new AuthorPublicData(
+						author.Name
 						)
 				    );
 		}

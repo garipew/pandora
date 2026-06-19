@@ -18,15 +18,13 @@ public class BooksController : ControllerBase
 	public ActionResult<BookPublicList> Get(BooksService booksService)
 	{
 		List<Book> books = booksService.GetBooks();
-		List<BookPublicResponse> response = new();
+		List<BookPublicData> response = new();
 		foreach(var book in books) {
-			response.Add(new BookPublicResponse(
-						new BookPublicData(
-							book.Isbn,
-							book.Pages,
-							book.Title,
-							book.Description
-							)
+			response.Add(new BookPublicData(
+						book.Isbn,
+						book.Pages,
+						book.Title,
+						book.Description
 						)
 				    );
 		}

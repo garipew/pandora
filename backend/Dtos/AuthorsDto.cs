@@ -8,4 +8,4 @@ public record AuthorResponse(AuthorData data);
 public record AuthorPublicData(string name);
 public record AuthorPublicResponse(AuthorPublicData data);
 
-public record AuthorPublicList(List<AuthorPublicResponse> data);
+public record AuthorPublicList(List<AuthorPublicData> data);

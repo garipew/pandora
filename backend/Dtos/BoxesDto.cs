@@ -8,4 +8,4 @@ public record BoxResponse(BoxData data);
 public record BoxPublicData(string title, string? description);
 public record BoxPublicResponse(BoxPublicData data);
 
-public record BoxPublicList(List<BoxPublicResponse> data);
+public record BoxPublicList(List<BoxPublicData> data);

@@ -31,13 +31,11 @@ public class BoxesController : ControllerBase
 					)
 				 );
 		}
-		List<BoxPublicResponse> response = new();
+		List<BoxPublicData> response = new();
 		foreach(var box in boxes) {
-			response.Add(new BoxPublicResponse(
-						new BoxPublicData(
-							box.Title,
-							box.Description
-							)
+			response.Add(new BoxPublicData(
+						box.Title,
+						box.Description
 						)
 				    );
 		}

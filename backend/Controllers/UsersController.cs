@@ -12,7 +12,6 @@ namespace Controller;
 [Route("[controller]")]
 public class UsersController : ControllerBase
 {
-
 	[Authorize(Roles = "Admin")]
 	[HttpPost("assign")]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
@@ -51,13 +50,11 @@ public class UsersController : ControllerBase
 	public ActionResult<UserPublicList> Get(UsersService service)
 	{
 		List<User> users = service.GetUsers();
-		List<UserPublicResponse> response = new();
+		List<UserPublicData> response = new();
 		foreach(var user in users) {
-			response.Add(new UserPublicResponse(
-						new UserPublicData(
-							user.Username,
-							user.CreatedAt
-							)
+			response.Add(new UserPublicData(
+						user.Username,
+						user.CreatedAt
 						)
 				    );
 		}
@@ -202,6 +199,7 @@ public class UsersController : ControllerBase
 					)
 				);
 	}
+
 	[HttpPost]
 	[ProducesResponseType<UserResponse>(StatusCodes.Status201Created)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status409Conflict)]
