@@ -100,7 +100,6 @@ public class BooksService
 	{
 		Book book = GetBookById(bookId);
 
-		// TODO(garipew): Should also delete the relationship AuthorBook
 		_context.Books.Remove(book);
 		_context.SaveChanges();
 
