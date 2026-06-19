@@ -2,9 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
+using Dto;
 using Model;
 using Service;
-using Dto;
+using Data;
 
 namespace Controller;
 
@@ -237,5 +238,120 @@ public class UsersController : ControllerBase
 						)
 					)
 				);	
+	}
+
+	[HttpGet("{userId:int}/books")]
+	[ProducesResponseType<UserBookList>(StatusCodes.Status200OK)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	public ActionResult<UserBookList> GetUserBooks(int userId, BooksService booksService)
+	{
+		List<UserBookData> books;
+		try {
+			books = booksService.GetBooksFromUser(userId);
+		} catch(UserNotFoundException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"USER_NOT_FOUND",
+							$"user [{userId}] do not exist"
+							)
+						)
+					);
+		}
+		return StatusCode(StatusCodes.Status200OK, new UserBookList(
+					books
+					)
+				);
+	}
+
+	[Authorize]
+	[HttpPost("{userId:int}/books")]
+	[ProducesResponseType<BookResponse>(StatusCodes.Status201Created)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status409Conflict)]
+	public ActionResult<BookResponse> AddBookToCollection(int userId, UsersService usersService, BooksService booksService, [FromBody]UserBookCreateRequest req)
+	{
+		var currentUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+		if(currentUserId == null) {
+			return StatusCode(
+					StatusCodes.Status401Unauthorized, new PandoraError(
+						new ErrorData(
+							"UNAUTHORIZED",
+							"missing or invalid token"
+							)
+						)
+					);
+		}
+		if(!currentUserId.Equals(userId.ToString())) {
+			return StatusCode(
+					StatusCodes.Status403Forbidden, new PandoraError(
+						new ErrorData(
+							"FORBIDDEN",
+							"you do not have permission to access this resource"
+							)
+						)
+					);
+		}
+		UserBookData newBook;
+		try {
+			User user = usersService.GetUserById(userId);
+			newBook = booksService.AddToCollection(
+					user,
+					req.title, req.author,
+					req.pagesRead,
+					req.rating, req.status,
+					req.beginDate, req.finishDate
+					);
+		} catch(UserNotFoundException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"USER_NOT_FOUND",
+							$"user [{userId}] do not exist"
+							)
+						)
+					);
+		} catch(AuthorNotFoundException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"AUTHOR_NOT_FOUND",
+							$"author [{req.author}] do not exist"
+							)
+						)
+					);
+		} catch(BookNotFoundException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"BOOK_NOT_FOUND",
+							$"book [{req.title} - {req.author}] do not exist"
+							)
+						)
+					);
+		} catch(CollectionConflictException) {
+			return StatusCode(
+					StatusCodes.Status409Conflict, new PandoraError(
+						new ErrorData(
+							"BOOK_ALREADY_IN_COLLECTION",
+							$"user [{userId}] already added book [{req.title} - {req.author}] to collection"
+							)
+						)
+					);
+		}
+
+		return StatusCode(
+				StatusCodes.Status201Created, new UserBookResponse(
+					new UserBookData(
+						newBook.UserId, newBook.BookId,
+						newBook.Title,
+						newBook.PagesRead, newBook.Pages,
+						newBook.Rating, newBook.Status,
+						newBook.BeginDate, newBook.FinishDate
+						)
+					)
+				);
 	}
 }

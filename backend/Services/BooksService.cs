@@ -104,6 +104,60 @@ public class BooksService
 
 		return book;
 	}
+
+	public List<UserBookData> GetBooksFromUser(int userId)
+	{
+		if(!_context.Users.Any(u => u.Id == userId)) {
+			throw new UserNotFoundException();
+		}
+		return _context.UserBooks
+			.Where(u => u.UserId == userId)
+			.Join(_context.Books,
+				ub => ub.BookId, book => book.Id,
+				(ub, book) => new UserBookData(
+					ub.UserId,
+					book.Id,
+					book.Title,
+					ub.PagesRead,
+					book.Pages,
+					ub.Rating,
+					ub.Status,
+					ub.BeginDate,
+					ub.FinishDate
+				)
+			     )
+			.ToList();
+	}
+
+	public UserBookData AddToCollection(User u, string title, string author, int pagesRead, int rating, Status status, DateTime? beginDate, DateTime? finishDate)
+	{
+		Book b = GetBookByAuthor(title, author);
+
+		if(_context.UserBooks.Any(ub => ub.UserId == u.Id && ub.BookId == b.Id)) {
+			throw new CollectionConflictException();
+		}
+
+		UserBook ub   = new();
+		ub.UserId     = u.Id;
+		ub.BookId     = b.Id;
+		ub.PagesRead  = pagesRead;
+		ub.Rating     = rating;
+		ub.Status     = status;
+		ub.BeginDate  = beginDate;
+		ub.FinishDate = finishDate;
+
+		_context.UserBooks.Add(ub);
+		_context.SaveChanges();
+
+		return new UserBookData(
+				ub.UserId, ub.BookId,
+				b.Title,
+				ub.PagesRead, b.Pages,
+				ub.Rating, ub.Status,
+				ub.BeginDate,
+				ub.FinishDate
+				);
+	}
 }
 
 public class BookNotFoundException : Exception
@@ -119,4 +173,9 @@ public class BookTitleConflictException : Exception
 public class IsbnConflictException : Exception
 {
 	public IsbnConflictException() : base() { }
+}
+
+public class CollectionConflictException : Exception
+{
+	public CollectionConflictException() : base() { }
 }
