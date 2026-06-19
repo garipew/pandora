@@ -51,9 +51,7 @@ METHOD PATH                                                   : authorization
 ### /authors
 
 - [x] GET    /authors                                         : public
-- [x] POST   /authors
 - [x] GET    /authors/{authorId}                              : public
-- [x] PUT    /authors/{authorId}
 - [x] DELETE /authors/{authorId}
 
 ### /auth
