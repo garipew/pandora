@@ -4,22 +4,6 @@
 METHOD PATH                                                   : authorization
 \*      \*                                                    : admin
 
-### /books
-
-- [x] GET    /books                                           : public
-- [x] POST   /books
-- [x] GET    /books/{bookId}                                  : public
-- [x] PUT    /books/{bookId}
-- [x] DELETE /books/{bookId}
-
-### /authors
-
-- [x] GET    /authors                                         : public
-- [x] POST   /authors
-- [x] GET    /authors/{authorId}                              : public
-- [x] PUT    /authors/{authorId}
-- [x] DELETE /authors/{authorId}
-
 ### /users
 
 - [x] GET    /users                                           : public
@@ -40,6 +24,14 @@ METHOD PATH                                                   : authorization
 - [ ] POST   /users/{userId}/following                        : owner
 - [ ] DELETE /users/{userId}/following/{followId}             : owner
 
+### /users/{userId}/books
+
+- [ ] GET    /users/{userId}/books                            : public
+- [ ] POST   /users/{userId}/books                            : owner
+- [ ] GET    /users/{userId}/books/{bookId}                   : public
+- [ ] PUT    /users/{userId}/books/{bookId}                   : owner
+- [ ] DELETE /users/{userId}/books/{bookId}                   : owner
+
 ### /users/{userId}/boxes
 
 - [x] GET    /users/{userId}/boxes                            : public
@@ -48,13 +40,21 @@ METHOD PATH                                                   : authorization
 - [x] PUT    /users/{userId}/boxes/{boxId}                    : owner
 - [x] DELETE /users/{userId}/boxes/{boxId}                    : owner
 
-### /users/{userId}/boxes/{boxId}/books
+### /books
 
-- [ ] GET    /users/{userId}/boxes/{boxId}/books              : public
-- [ ] POST   /users/{userId}/boxes/{boxId}/books              : owner
-- [ ] GET    /users/{userId}/boxes/{boxId}/books/{bookId}     : public
-- [ ] PUT    /users/{userId}/boxes/{boxId}/books/{bookId}     : owner
-- [ ] DELETE /users/{userId}/boxes/{boxId}/books/{bookId}     : owner
+- [x] GET    /books                                           : public
+- [x] POST   /books
+- [x] GET    /books/{bookId}                                  : public
+- [x] PUT    /books/{bookId}
+- [x] DELETE /books/{bookId}
+
+### /authors
+
+- [x] GET    /authors                                         : public
+- [x] POST   /authors
+- [x] GET    /authors/{authorId}                              : public
+- [x] PUT    /authors/{authorId}
+- [x] DELETE /authors/{authorId}
 
 ### /auth
 
