@@ -20,7 +20,7 @@ public class BooksService
 		}
 
 		Book newBook = new Book();
-		newBook.Title       = title;
+		newBook.Title       = title.ToLower();
 		newBook.Description = description;
 		newBook.Isbn        = isbn;
 		newBook.Pages       = pages;
@@ -64,7 +64,7 @@ public class BooksService
 		}
 		book.Isbn        = isbn;
 		book.Pages       = pages;
-		book.Title       = title;
+		book.Title       = title.ToLower();
 		book.Description = description;
 		_context.SaveChanges();
 
