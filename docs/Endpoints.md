@@ -26,11 +26,11 @@ METHOD PATH                                                   : authorization
 
 ### /users/{userId}/books
 
-- [ ] GET    /users/{userId}/books                            : public
-- [ ] POST   /users/{userId}/books                            : owner
-- [ ] GET    /users/{userId}/books/{bookId}                   : public
-- [ ] PUT    /users/{userId}/books/{bookId}                   : owner
-- [ ] DELETE /users/{userId}/books/{bookId}                   : owner
+- [x] GET    /users/{userId}/books                            : public
+- [x] POST   /users/{userId}/books                            : owner
+- [x] GET    /users/{userId}/books/{bookId}                   : public
+- [x] PUT    /users/{userId}/books/{bookId}                   : owner
+- [x] DELETE /users/{userId}/books/{bookId}                   : owner
 
 ### /users/{userId}/boxes
 

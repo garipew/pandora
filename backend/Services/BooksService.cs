@@ -189,6 +189,53 @@ public class BooksService
 		}
 		return book;
 	}
+
+	public UserBookData UpdateUserBook(int userId, int bookId, int pagesRead, int rating, Status status, DateTime? beginDate, DateTime? finishDate)
+	{
+		if(!_context.Users.Any(u => u.Id == userId)) {
+			throw new UserNotFoundException();
+		}
+		if(!_context.Books.Any(b => b.Id == bookId)) {
+			throw new BookNotFoundException();
+		}
+
+		UserBook? ub = _context.UserBooks.FirstOrDefault(ub => ub.UserId == userId && ub.BookId == bookId);
+		if(ub == null) {
+			throw new BookNotInCollectionException();
+		}
+
+		ub.PagesRead = pagesRead;
+		ub.Rating = rating;
+		ub.Status = status;
+		ub.BeginDate = beginDate;
+		ub.FinishDate = finishDate;
+
+		_context.SaveChanges();
+
+		return GetBookFromUser(userId, bookId);
+	}
+
+	public UserBookData DeleteUserBook(int userId, int bookId)
+	{
+		if(!_context.Users.Any(u => u.Id == userId)) {
+			throw new UserNotFoundException();
+		}
+		if(!_context.Books.Any(b => b.Id == bookId)) {
+			throw new BookNotFoundException();
+		}
+
+		UserBook? ub = _context.UserBooks.FirstOrDefault(ub => ub.UserId == userId && ub.BookId == bookId);
+		if(ub == null) {
+			throw new BookNotInCollectionException();
+		}
+
+		UserBookData data = GetBookFromUser(userId, bookId);
+
+		_context.UserBooks.Remove(ub);
+		_context.SaveChanges();
+
+		return data;
+	}
 }
 
 public class BookNotFoundException : Exception
@@ -204,6 +251,11 @@ public class BookTitleConflictException : Exception
 public class IsbnConflictException : Exception
 {
 	public IsbnConflictException() : base() { }
+}
+
+public class BookNotInCollectionException : Exception
+{
+	public BookNotInCollectionException() : base() { }
 }
 
 public class CollectionConflictException : Exception

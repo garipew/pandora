@@ -10,6 +10,14 @@ public record UserBookCreateRequest(
 		DateTime? finishDate
 		);
 
+public record UserBookUpdateRequest(
+		int pagesRead,
+		int rating, Status status,
+		DateTime? beginDate,
+		DateTime? finishDate
+		);
+
+
 public record UserBookData(
 		int UserId, int BookId,
 		string Title,

@@ -266,12 +266,12 @@ public class UsersController : ControllerBase
 
 	[Authorize]
 	[HttpPost("{userId:int}/books")]
-	[ProducesResponseType<BookResponse>(StatusCodes.Status201Created)]
+	[ProducesResponseType<UserBookResponse>(StatusCodes.Status201Created)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
 	[ProducesResponseType<PandoraError>(StatusCodes.Status409Conflict)]
-	public ActionResult<BookResponse> AddBookToCollection(int userId, UsersService usersService, BooksService booksService, [FromBody]UserBookCreateRequest req)
+	public ActionResult<UserBookResponse> AddBookToCollection(int userId, UsersService usersService, BooksService booksService, [FromBody]UserBookCreateRequest req)
 	{
 		var currentUserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
 		if(currentUserId == null) {
@@ -356,8 +356,8 @@ public class UsersController : ControllerBase
 	}
 
 	[HttpGet("{userId:int}/books/{bookId:int}")]
-	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
 	[ProducesResponseType<UserBookResponse>(StatusCodes.Status200OK)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
 	public ActionResult<UserBookResponse> Get(int userId, int bookId, BooksService bookService)
 	{
 		UserBookData book;
@@ -393,5 +393,94 @@ public class UsersController : ControllerBase
 						)
 					)
 				);
+	}
+
+	[Authorize]
+	[HttpPut("{userId:int}/books/{bookId:int}")]
+	[ProducesResponseType<UserBookResponse>(StatusCodes.Status200OK)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status409Conflict)]
+	public ActionResult<UserBookResponse> UpdateBook(int userId, int bookId, BooksService bookService, [FromBody]UserBookUpdateRequest req)
+	{
+		UserBookData book;
+		try {
+			book = bookService.UpdateUserBook(userId, bookId,
+					req.pagesRead, req.rating,
+					req.status,
+					req.beginDate, req.finishDate);
+		} catch(UserNotFoundException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"USER_NOT_FOUND",
+							$"user [{userId}] do not exist"
+							)
+						)
+					);
+		} catch(BookNotInCollectionException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"BOOK_NOT_IN_COLLECTION",
+							$"book [{bookId}] is not on user [{userId}] collection"
+							)
+						)
+					);
+		} catch(BookNotFoundException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"BOOK_NOT_FOUND",
+							$"book [{bookId}] do not exist"
+							)
+						)
+					);
+		}
+
+		return StatusCode(StatusCodes.Status200OK, new UserBookResponse(book));
+	}
+
+	[Authorize]
+	[HttpDelete("{userId:int}/books/{bookId:int}")]
+	[ProducesResponseType<UserBookResponse>(StatusCodes.Status200OK)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status403Forbidden)]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	public ActionResult<BookResponse> DeleteBook(int userId, int bookId, BooksService bookService)
+	{
+		UserBookData book;
+		try {
+			book = bookService.DeleteUserBook(userId, bookId);
+		} catch(BookNotFoundException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"BOOK_NOT_FOUND",
+							$"book [{bookId}] do not exist"
+							)
+						)
+					);
+		} catch(UserNotFoundException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"USER_NOT_FOUND",
+							$"user [{userId}] do not exist"
+							)
+						)
+					);
+		} catch(BookNotInCollectionException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"BOOK_NOT_IN_COLLECTION",
+							$"book [{bookId}] is not on user [{userId}] collection"
+							)
+						)
+					);
+		}
+		return StatusCode(StatusCodes.Status200OK, new UserBookResponse(book));
 	}
 }
