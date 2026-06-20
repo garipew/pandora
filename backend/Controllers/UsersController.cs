@@ -354,4 +354,44 @@ public class UsersController : ControllerBase
 					)
 				);
 	}
+
+	[HttpGet("{userId:int}/books/{bookId:int}")]
+	[ProducesResponseType<PandoraError>(StatusCodes.Status404NotFound)]
+	[ProducesResponseType<UserBookResponse>(StatusCodes.Status200OK)]
+	public ActionResult<UserBookResponse> Get(int userId, int bookId, BooksService bookService)
+	{
+		UserBookData book;
+		try {
+			book = bookService.GetBookFromUser(userId, bookId);
+		} catch(BookNotFoundException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"BOOK_NOT_FOUND",
+							$"book [{bookId}] do not exist"
+							)
+						)
+					);
+		} catch(UserNotFoundException) {
+			return StatusCode(
+					StatusCodes.Status404NotFound, new PandoraError(
+						new ErrorData(
+							"USER_NOT_FOUND",
+							$"user [{userId}] do not exist"
+							)
+						)
+					);
+		}
+		return StatusCode(
+				StatusCodes.Status200OK, new UserBookResponse(
+					new UserBookData(
+						book.UserId, book.BookId,
+						book.Title,
+						book.PagesRead, book.Pages,
+						book.Rating, book.Status,
+						book.BeginDate, book.FinishDate
+						)
+					)
+				);
+	}
 }

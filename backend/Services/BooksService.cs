@@ -159,6 +159,36 @@ public class BooksService
 				ub.FinishDate
 				);
 	}
+
+	public UserBookData GetBookFromUser(int userId, int bookId)
+	{
+		if(!_context.Users.Any(u => u.Id == userId)) {
+			throw new UserNotFoundException();
+		}
+		UserBookData? book = _context.UserBooks
+			.Where(u => u.UserId == userId)
+			.Join(_context.Books,
+				ub => ub.BookId, book => book.Id,
+				(ub, book) => new UserBookData(
+					ub.UserId,
+					book.Id,
+					book.Title,
+					ub.PagesRead,
+					book.Pages,
+					ub.Rating,
+					ub.Status,
+					ub.BeginDate,
+					ub.FinishDate
+				)
+			     )
+			.ToList()
+			.FirstOrDefault(b => b.BookId == bookId);
+
+		if(book == null) {
+			throw new BookNotFoundException();
+		}
+		return book;
+	}
 }
 
 public class BookNotFoundException : Exception
