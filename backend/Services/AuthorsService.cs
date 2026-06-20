@@ -14,12 +14,13 @@ public class AuthorsService
 
 	public Author CreateAuthor(string name)
 	{
-		if(_context.Authors.Where(u => u.Name == name).Any()) {
+		var capitalizedName = name.ToLower();
+		if(_context.Authors.Where(u => u.Name == capitalizedName).Any()) {
 			throw new AuthorNameConflictException();
 		}
 
 		Author newAuthor = new Author();
-		newAuthor.Name = name;
+		newAuthor.Name = capitalizedName;
 
 		_context.Authors.Add(newAuthor);
 		_context.SaveChanges();
@@ -43,20 +44,22 @@ public class AuthorsService
 
 	public Author GetOrCreate(string name)
 	{
-		Author? author = _context.Authors.FirstOrDefault(a => a.Name == name);
+		var capitalizedName = name.ToLower();
+		Author? author = _context.Authors.FirstOrDefault(a => a.Name == capitalizedName);
 		if(author == null) {
-			author = CreateAuthor(name);
+			author = CreateAuthor(capitalizedName);
 		}
 		return author;
 	}
 
 	public Author UpdateAuthor(int authorId, string name)
 	{
-		if(_context.Authors.Where(a => a.Id != authorId).Any(a => a.Name == name)) {
+		var capitalizedName = name.ToLower();
+		if(_context.Authors.Where(a => a.Id != authorId).Any(a => a.Name == capitalizedName)) {
 			throw new AuthorNameConflictException();
 		}
 		Author author = GetAuthorById(authorId);
-		author.Name = name;
+		author.Name = capitalizedName;
 		_context.SaveChanges();
 
 		return author;
